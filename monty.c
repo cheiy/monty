@@ -1,3 +1,4 @@
+#define _GNU_SOURCE
 #include "monty.h"
 #include <stdio.h>
 #include <sys/types.h>
@@ -15,8 +16,10 @@
  */
 int main(int argc, char **argv)
 {
-	int fd;
-	char *filename;
+	FILE *fp;
+	int read;
+	char *filename, *lineptr;
+	size_t size;
 
 	if (argc < 2)
 	{
@@ -24,12 +27,16 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 	filename = argv[1];
-	fd = open(filename, O_RDONLY);
-	if (fd < 0)
+	fp = fopen(filename, "r");
+	if (fp == NULL)
 	{
 		printf("Error: Can't open file %s\n", filename);
 		exit(EXIT_FAILURE);
 	}
-
+	lineptr = NULL;
+	while ((read = getline(&lineptr, &size, fp)) != -1)
+	{
+		printf("%s\n", lineptr);
+	}
 	return (0);
 }
